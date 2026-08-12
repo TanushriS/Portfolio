@@ -233,6 +233,26 @@ img {
   width: 100%;
 }
 
+.nav-links a.nav-resume-btn::after {
+  display: none;
+}
+
+.nav-links a.nav-resume-btn {
+  border: 1.5px solid var(--accent);
+  padding: 6px 14px !important;
+  border-radius: 20px;
+  color: var(--accent) !important;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-links a.nav-resume-btn:hover {
+  background: var(--accent);
+  color: #fff !important;
+}
+
 /* Theme Toggle */
 .theme-toggle {
   background: var(--bg-card);
