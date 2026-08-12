@@ -193,82 +193,20 @@
         <div class="section-divider"></div>
       </div>
 
-      <!-- Project 1: Nourishfy -->
-      <div class="project-card reveal-element">
-        <div class="proj-left">
-          <span class="proj-number">01</span>
-          <h3>Nourishfy – AI Nutrition &amp; Smart Groceries</h3>
-          <p class="proj-type">Personal Project</p>
-          <p class="proj-duration">📅 Sept. 2025</p>
-        </div>
-        <div class="proj-right">
-          <p class="proj-description">
-            An AI-powered nutrition planner that generates personalized weekly food plans based on user deficiencies, symptoms, and dietary exclusions using Gemini 2.5-flash. Combines real-time data management with a mobile-first, dark/light mode interface.
-          </p>
-          <div class="proj-outcomes">
-            <div class="outcome-box reveal-element">
-              <span class="outcome-number">1</span>
-              <span>Generated personalized weekly nutrition plans using Gemini 2.5-flash</span>
-            </div>
-            <div class="outcome-box reveal-element">
-              <span class="outcome-number">2</span>
-              <span>Implemented Firebase Authentication and Firestore for real-time profile, plan, and grocery tracking</span>
-            </div>
-            <div class="outcome-box reveal-element">
-              <span class="outcome-number">3</span>
-              <span>Built dynamic grocery list generation with food image caching for optimized performance</span>
-            </div>
-            <div class="outcome-box reveal-element">
-              <span class="outcome-number">4</span>
-              <span>Delivered a fully responsive, mobile-first UI with dark/light mode</span>
-            </div>
-          </div>
-          <div class="tech-tags">
-            <span class="tech-tag">React.js</span>
-            <span class="tech-tag">Tailwind CSS</span>
-            <span class="tech-tag">Firebase</span>
-            <span class="tech-tag">Gemini API</span>
-          </div>
-        </div>
+      <!-- Category Filter Bar -->
+      <div class="projects-filter-bar">
+        <button class="filter-btn active" data-filter="All">All</button>
+        <button class="filter-btn" data-filter="AI / ML">AI / ML</button>
+        <button class="filter-btn" data-filter="Full Stack">Full Stack</button>
+        <button class="filter-btn" data-filter="Systems">Systems</button>
       </div>
 
-      <!-- Project 2: IntelliQRHelp -->
-      <div class="project-card reveal-element">
-        <div class="proj-left">
-          <span class="proj-number">02</span>
-          <h3>IntelliQRHelp</h3>
-          <p class="proj-type">Personal Project</p>
-          <p class="proj-duration">📅 Jan. 2025</p>
-        </div>
-        <div class="proj-right">
-          <p class="proj-description">
-            An emergency response system that generates encrypted QR codes linking to user medical profiles, paired with a secure web dashboard for managing medical details and emergency contacts.
-          </p>
-          <div class="proj-outcomes">
-            <div class="outcome-box reveal-element">
-              <span class="outcome-number">1</span>
-              <span>Generated 1,000+ encrypted QR codes linking to user medical profiles</span>
-            </div>
-            <div class="outcome-box reveal-element">
-              <span class="outcome-number">2</span>
-              <span>Built a web dashboard used by 300+ users to manage medical details</span>
-            </div>
-            <div class="outcome-box reveal-element">
-              <span class="outcome-number">3</span>
-              <span>Enabled each user to manage 5+ emergency contacts securely</span>
-            </div>
-            <div class="outcome-box reveal-element">
-              <span class="outcome-number">4</span>
-              <span>Ensured real-time updates via Firebase Authentication and Firestore</span>
-            </div>
-          </div>
-          <div class="tech-tags">
-            <span class="tech-tag">React.js</span>
-            <span class="tech-tag">Firebase</span>
-            <span class="tech-tag">QRServer API</span>
-            <span class="tech-tag">Telegram Bot API</span>
-          </div>
-        </div>
+      <!-- Projects Container -->
+      <div id="projects-container"></div>
+      
+      <!-- Projects Expand/Collapse Toggle Button -->
+      <div class="projects-toggle-container" id="projects-toggle-container" style="display: none;">
+        <button id="projects-toggle-btn" class="btn btn-outline">View All Projects</button>
       </div>
     </div>
   </section>
@@ -630,7 +568,6 @@
           <h3>Send Me a Message</h3>
           <p class="sub">Fill out the form and I'll get back to you shortly.</p>
           <form id="contactForm" action="https://formsubmit.co/tanushrisukhwal@gmail.com" method="POST">
-            <input type="hidden" name="_subject" value="New portfolio message from a visitor!">
             <input type="hidden" name="_captcha" value="false">
             <div class="form-group">
               <input type="text" id="fullName" name="name" placeholder=" " required />

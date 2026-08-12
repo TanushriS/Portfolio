@@ -213,32 +213,98 @@ document.addEventListener('DOMContentLoaded', () => {
 
   eduCards.forEach(card => eduObserver.observe(card));
 
-  // ── PROJECT OUTCOME BOXES: DEALT CARDS EFFECT ──
-  const projCards = document.querySelectorAll('.project-card');
+  // ── PROJECTS FILTER BAR STATE & DYNAMIC RENDER ──
+  const projects = [
+    {
+      id: "ai-interviewer",
+      title: "AI Technical Interviewer",
+      date: "July 2026",
+      tags: ["All", "AI / ML", "Full Stack"],
+      description: "A microservice-based AI technical interviewer using DeepSeek-R1 (Ollama) and Whisper speech-to-text for real-time coding evaluations and automated candidate feedback.",
+      bulletPoints: [
+        "Orchestrated real-time WebSocket sessions using Node.js API Gateway and Socket.io",
+        "Engineered local transcription service using FastAPI, Uvicorn, and OpenAI Whisper",
+        "Integrated low-latency local reasoning model using Ollama (deepseek-r1:1.5b)",
+        "Built candidate UI featuring Monaco Editor, Redux Toolkit, and Chart.js"
+      ],
+      techStack: ["React", "Redux", "TailwindCSS", "Monaco Editor", "Chart.js", "Node.js", "Express", "MongoDB", "Socket.io", "FastAPI", "Whisper", "Ollama"]
+    },
+    {
+      id: "nourishfy",
+      title: "Nourishfy – AI Nutrition & Smart Groceries",
+      date: "Sept. 2025",
+      tags: ["All", "Full Stack", "AI / ML"],
+      description: "AI-powered nutrition planner that generates personalized weekly food plans based on user deficiencies, symptoms, and dietary exclusions using Gemini 2.5-flash.",
+      bulletPoints: [
+        "Generated personalized weekly nutrition plans using Gemini 2.5-flash",
+        "Implemented Firebase Authentication and Firestore for real-time profile, plan, and grocery tracking",
+        "Built dynamic grocery list generation with food image caching for optimized performance",
+        "Delivered a fully responsive, mobile-first UI with dark/light mode"
+      ],
+      techStack: ["React.js", "Tailwind CSS", "Firebase Auth", "Firestore", "Gemini 2.5 API"]
+    },
+    {
+      id: "thermosense",
+      title: "Thermosense",
+      date: "Aug 2025",
+      tags: ["All", "Systems", "AI / ML", "Full Stack"],
+      description: "Cross‑platform battery–health dashboard powered by a Random‑Forest model, FastAPI, and a React front‑end.",
+      bulletPoints: [
+        "Extracted native OS hardware telemetry using Python 3.11 (`ioreg` & `powermetrics` for macOS; `WMI` for Windows)",
+        "Trained a Random Forest model to forecast battery health and thermal pressure metrics",
+        "Containerized deployment using Docker and Nginx reverse proxy",
+        "Connected cross-platform native sensors to a responsive React dashboard"
+      ],
+      techStack: ["Python 3.11", "FastAPI", "Random Forest", "React", "Docker", "Nginx", "Tailwind CSS", "WMI / ioreg"]
+    },
+    {
+      id: "intelliqrhelp",
+      title: "IntelliQRHelp",
+      date: "Jan. 2025",
+      tags: ["All", "Full Stack", "Systems"],
+      description: "Emergency response system that generates encrypted QR codes linking to user medical profiles, paired with a secure web dashboard.",
+      bulletPoints: [
+        "Generated 1,000+ encrypted QR codes linking to user medical profiles",
+        "Built a web dashboard used by 300+ users to manage medical details",
+        "Enabled each user to manage 5+ emergency contacts securely",
+        "Ensured real-time updates via Firebase and Telegram Bot API alerting"
+      ],
+      techStack: ["React.js", "Tailwind CSS", "Firebase Auth", "Firestore", "QRServer API", "Telegram Bot API"]
+    }
+  ];
+
+  const projectsContainer = document.getElementById('projects-container');
+  const toggleContainer = document.getElementById('projects-toggle-container');
+  const toggleBtn = document.getElementById('projects-toggle-btn');
+  let activeFilter = "All";
+  let isExpanded = false;
+
+  // Reusable IntersectionObserver for outcomes & tags inside dynamic cards
   const projObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
+        // Trigger outcome boxes animation inside card
         const outcomes = entry.target.querySelectorAll('.outcome-box');
         outcomes.forEach((box, i) => {
           box.style.opacity = '0';
           box.style.transform = 'scale(0.8) translateY(15px)';
-          box.style.transition = `opacity 0.4s ease ${i * 0.12}s, transform 0.4s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.12}s`;
+          box.style.transition = `opacity 0.4s ease ${i * 0.1}s, transform 0.4s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.1}s`;
           setTimeout(() => {
             box.style.opacity = '1';
             box.style.transform = 'scale(1) translateY(0)';
-          }, 100);
+          }, 50);
         });
 
-        // Tech tags rubber band
+        // Trigger tech tags animation inside card
         const tags = entry.target.querySelectorAll('.tech-tag');
         tags.forEach((tag, i) => {
           tag.style.opacity = '0';
           tag.style.transform = 'scale(0.3)';
-          tag.style.transition = `opacity 0.3s ease ${0.5 + i * 0.1}s, transform 0.5s cubic-bezier(0.34,1.56,0.64,1) ${0.5 + i * 0.1}s`;
+          tag.style.transition = `opacity 0.3s ease ${0.4 + i * 0.08}s, transform 0.5s cubic-bezier(0.34,1.56,0.64,1) ${0.4 + i * 0.08}s`;
           setTimeout(() => {
             tag.style.opacity = '1';
             tag.style.transform = 'scale(1)';
-          }, 100);
+          }, 50);
         });
 
         projObserver.unobserve(entry.target);
@@ -246,7 +312,142 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { threshold: 0.15 });
 
-  projCards.forEach(card => projObserver.observe(card));
+  function renderProjects(filter = "All") {
+    if (!projectsContainer) return;
+
+    // Filter projects
+    const filteredProjects = projects.filter(p => p.tags.includes(filter));
+
+    // Limit to first 2 by default unless expanded
+    const projectsToDisplay = isExpanded ? filteredProjects : filteredProjects.slice(0, 2);
+
+    // Get current cards if any, to animate them out
+    const existingCards = projectsContainer.querySelectorAll('.project-card');
+    
+    if (existingCards.length > 0) {
+      // Animate out existing cards
+      existingCards.forEach(card => {
+        card.classList.remove('fade-enter-active');
+        card.classList.add('fade-exit-active');
+      });
+      // Wait for exit transition, then build new cards
+      setTimeout(() => {
+        buildNewCards(projectsToDisplay);
+        updateToggleButton(filteredProjects.length);
+      }, 300);
+    } else {
+      buildNewCards(projectsToDisplay);
+      updateToggleButton(filteredProjects.length);
+    }
+  }
+
+  function updateToggleButton(totalCount) {
+    if (!toggleContainer || !toggleBtn) return;
+    
+    if (totalCount > 2) {
+      toggleContainer.style.display = 'flex';
+      toggleBtn.textContent = isExpanded ? 'Show Less' : 'View All Projects';
+    } else {
+      toggleContainer.style.display = 'none';
+    }
+  }
+
+  function buildNewCards(projectsList) {
+    projectsContainer.innerHTML = '';
+    
+    projectsList.forEach((project, idx) => {
+      const formattedNum = String(idx + 1).padStart(2, '0');
+      const projectType = project.date === "Personal Project" ? "System & Data Research" : "Personal Project";
+      
+      const techHTML = project.techStack
+        .map(tech => `<span class="tech-tag">${tech}</span>`)
+        .join('');
+        
+      const outcomesHTML = project.bulletPoints
+        .map((point, index) => `
+          <div class="outcome-box">
+            <span class="outcome-number">${index + 1}</span>
+            <span>${point}</span>
+          </div>
+        `)
+        .join('');
+
+      const card = document.createElement('div');
+      card.className = 'project-card fade-enter';
+      card.innerHTML = `
+        <div class="proj-left">
+          <span class="proj-number">${formattedNum}</span>
+          <h3>${project.title}</h3>
+          <p class="proj-type">${projectType}</p>
+          <p class="proj-duration">📅 ${project.date}</p>
+        </div>
+        <div class="proj-right">
+          <p class="proj-description">${project.description}</p>
+          <div class="proj-outcomes">
+            ${outcomesHTML}
+          </div>
+          <div class="tech-tags">
+            ${techHTML}
+          </div>
+        </div>
+      `;
+
+      projectsContainer.appendChild(card);
+      
+      // Observe the newly added card for outcomes & tags scroll reveal
+      projObserver.observe(card);
+
+      // Force reflow
+      card.offsetHeight;
+      
+      // Staggered fade/slide in
+      setTimeout(() => {
+        card.classList.remove('fade-enter');
+        card.classList.add('fade-enter-active');
+      }, idx * 150);
+    });
+  }
+
+  // Setup click listeners for filter buttons
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Reset expanded state
+      isExpanded = false;
+      
+      activeFilter = btn.getAttribute('data-filter');
+      renderProjects(activeFilter);
+    });
+  });
+
+  // Setup click listener for toggle button
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      isExpanded = !isExpanded;
+      
+      // Smooth scroll back to top of projects if collapsing
+      if (!isExpanded) {
+        const projSection = document.getElementById('projects');
+        if (projSection) {
+          const headerOffset = 80;
+          const elementPosition = projSection.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }
+      
+      renderProjects(activeFilter);
+    });
+  }
+
+  // Initial render on page load
+  renderProjects(activeFilter);
 
   // ── CERTIFICATION CARDS: WATERFALL CASCADE ──
   const certCards = document.querySelectorAll('.cert-card');
